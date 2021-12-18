@@ -2,6 +2,7 @@
 # executable
 load("@build_bazel_rules_swift//swift/internal:feature_names.bzl", "SWIFT_FEATURE_USE_GLOBAL_INDEX_STORE")
 load("//rules:features.bzl", "feature_names")
+load("@bazel_skylib//lib:selects.bzl", "selects")
 
 sh_binary(
     name = "buildifier",
@@ -30,11 +31,58 @@ config_setting(
 )
 
 config_setting(
-    name = "bazel4_override_simulator_cpu_arm64",
+    name = "XXbazel4_override_simulator_cpu_arm64",
     values = {
         "features": feature_names.bazel4_override_simulator_cpu_arm64,
     },
 )
+
+config_setting(
+    name = "bazel4_override_simulator_cpu_arm64_default",  
+    values = {
+        "cpu": "",      
+        "features": feature_names.bazel4_override_simulator_cpu_arm64,
+    },                                 
+)  
+
+config_setting(    
+    name = "bazel4_override_simulator_cpu_arm64_default_1",
+    values = {
+        "cpu": "x86_64",
+        "features": feature_names.bazel4_override_simulator_cpu_arm64,
+    },                                 
+)
+
+selects.config_setting_group(
+    name = "bazel4_override_simulator_cpu_arm64",
+    match_all = ["bazel4_override_simulator_cpu_arm64_default", ":bazel4_override_simulator_cpu_arm64_default_1"],
+)
+
+
+# TODO(b/180572694): Remove ios_sim_arm64 after platforms based toolchain resolution supported.
+# Create a set of public config_settings that can be used in select()s.
+[
+    config_setting(
+        name = arch,
+        values = {"cpu": arch},
+    )
+    for arch in [
+        "darwin_x86_64",
+        "darwin_arm64",
+        "darwin_arm64e",
+        "ios_i386",
+        "ios_x86_64",
+        "ios_armv7",
+        "ios_arm64",
+        "ios_sim_arm64",
+        "tvos_x86_64",
+        "tvos_arm64",
+        "watchos_i386",
+        "watchos_arm64",
+        "watchos_armv7k",
+        "watchos_arm64_32",
+    ]
+]
 
 xcode_version(
     name = "version12_2_0_12B45b",

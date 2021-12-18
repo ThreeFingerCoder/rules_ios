@@ -328,6 +328,8 @@ def _xcframework(*, library_name, name, slices):
                 elif arch == "arm64":
                     if platform_variant == "simulator":
                         arm64_simulator_slice = name
+                        # Skip this - it's later defined?
+                        continue
                     else:
                         arm64_ios_device_slice = name
 
@@ -355,6 +357,9 @@ def _xcframework(*, library_name, name, slices):
                 ))
             conditions[config_setting_name] = name
             conditions_vfs[config_setting_name] = vfs_overlay_target_name
+            match_all = [platform_setting, arch_setting]
+            # if platform == "ios" and platform_variant == "simulator":
+            #    fail()
             selects.config_setting_group(
                 name = config_setting_name,
                 match_all = [platform_setting, arch_setting],
