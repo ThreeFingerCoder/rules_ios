@@ -559,7 +559,7 @@ def _bundle_dynamic_framework(ctx, avoid_deps):
     platform_prerequisites = platform_support.platform_prerequisites_from_rule_ctx(ctx)
 
     # This file is used as part of the rules_apple bundling logic
-    archive = actions.declare_file(ctx.attr.name + ".framework")
+    archive = actions.declare_file(ctx.attr.name + ".framework.zip")
     predeclared_outputs = struct(archive = archive)
 
     provisioning_profile = None
@@ -768,7 +768,6 @@ def _bundle_static_framework(ctx, outputs):
     current_apple_platform = transition_support.current_apple_platform(apple_fragment = ctx.fragments.apple, xcode_config = ctx.attr._xcode_config)
 
     # Static packaging - archives are passed from library deps
-    # Merges Info.plists and converts them into binary
     return struct(files = depset([]), providers = [
         AppleBundleInfo(
             archive = None,
